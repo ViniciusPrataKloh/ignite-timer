@@ -32,7 +32,7 @@ export const FormContainer = styled.div`
 
 const BaseInput = styled.input`
     background: transparent;
-    color: ${(props) => props.theme['gray-500']};
+    color: ${(props) => props.theme['gray-100']};
     height: 2.5rem;
     border: 0;
     border-bottom: 2px solid ${(props) => props.theme['gray-500']};
@@ -41,7 +41,7 @@ const BaseInput = styled.input`
     padding: 0 0.5rem;
 
     &::placeholder {
-        color: ${(props) => props.theme['gray-100']};
+        color: ${(props) => props.theme['gray-500']};
     }
 
     &:focus {
