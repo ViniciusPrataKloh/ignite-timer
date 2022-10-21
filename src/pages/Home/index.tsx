@@ -32,9 +32,9 @@ export function Home() {
                 <FormContainer>
                     <label htmlFor="task">Vou trabalhar em</label>
                     <TaskInput
-                        id="task"
                         placeholder="Dê um nome para o seu projeto"
                         list="task-suggestions"
+                        {...register('task')}
                     />
 
                     <datalist id="task-suggestions">
@@ -47,12 +47,11 @@ export function Home() {
                     <label htmlFor="minutesAmount">durante</label>
                     <MinutesAmountInput
                         type="number"
-                        id="minutesAmount"
                         placeholder="00"
                         step={5}
                         min={5}
                         max={60}
-                        {...register('task')}
+                        {...register('minutesAmount')}
                     />
 
                     <span>minutos.</span>
@@ -70,7 +69,6 @@ export function Home() {
                     type="submit"
                     form="timerForm"
                     disabled={isInputEmpty}
-                    {...register('minutesAmount')}
                 >
                     <Play size={24} />
                     Começar
