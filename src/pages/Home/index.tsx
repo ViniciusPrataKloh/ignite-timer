@@ -34,15 +34,15 @@ interface Cycle {
 export function Home() {
     const [cycles, setCycles] = useState<Cycle[]>([])
     const [activeCycle, setActiveCycle] = useState<string | null>(null)
+    const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
-    const { register, handleSubmit, watch, formState, reset } =
-        useForm<NewCycleFormData>({
-            resolver: zodResolver(newCycleFormValidationSchema),
-            defaultValues: {
-                task: '',
-                minutesAmount: 0,
-            },
-        })
+    const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
+        resolver: zodResolver(newCycleFormValidationSchema),
+        defaultValues: {
+            task: '',
+            minutesAmount: 0,
+        },
+    })
 
     function handleSubmitForm(data: NewCycleFormData): void {
         const id = uuid()
@@ -55,12 +55,21 @@ export function Home() {
 
         setCycles((state) => [...state, newCycle])
         setActiveCycle(id)
+
+        // onStartCycle()
+
         reset()
     }
 
-    console.log(formState.errors)
-    console.log(cycles)
-    console.log(activeCycle)
+    // function onStartCycle() {
+    const active = cycles.find((cycle) => cycle.id === activeCycle)
+
+    const secondsAmount = active ? active.minutesAmount : 0
+    const currentSeconds = active ? secondsAmount - amountSecondsPassed : 0
+
+    const minutes = String(Math.floor(currentSeconds / 60)).padStart(2, '0')
+    const seconds = String(currentSeconds % 60).padStart(2, '0')
+    // }
 
     const task = watch('task')
     const minutesAmount = watch('minutesAmount')
@@ -102,11 +111,11 @@ export function Home() {
                 </FormContainer>
 
                 <CountdownContainer>
-                    <span>0</span>
-                    <span>0</span>
+                    <span>{minutes[0]}</span>
+                    <span>{minutes[1]}</span>
                     <Separator>:</Separator>
-                    <span>0</span>
-                    <span>0</span>
+                    <span>{seconds[0]}</span>
+                    <span>{seconds[1]}</span>
                 </CountdownContainer>
 
                 <StartCountdownButton
