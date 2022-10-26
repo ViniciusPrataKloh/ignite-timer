@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { v4 as uuid } from 'uuid'
+import { differenceInSeconds } from 'date-fns'
 import {
     CountdownContainer,
     FormContainer,
@@ -13,7 +14,7 @@ import {
     // eslint-disable-next-line prettier/prettier
     TaskInput
 } from './styles'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const newCycleFormValidationSchema = zod.object({
     task: zod.string().min(1, 'Informe a tarefa'),
@@ -29,11 +30,12 @@ interface Cycle {
     id: string
     task: string
     minutesAmount: number
+    startDate: Date
 }
 
 export function Home() {
     const [cycles, setCycles] = useState<Cycle[]>([])
-    const [activeCycle, setActiveCycle] = useState<string | null>(null)
+    const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
     const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
     const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
@@ -44,32 +46,39 @@ export function Home() {
         },
     })
 
-    function handleSubmitForm(data: NewCycleFormData): void {
+    function handleCreateNewCycle(data: NewCycleFormData): void {
         const id = uuid()
 
         const newCycle: Cycle = {
             id,
             task: data.task,
             minutesAmount: data.minutesAmount,
+            startDate: new Date(),
         }
 
         setCycles((state) => [...state, newCycle])
-        setActiveCycle(id)
-
-        // onStartCycle()
+        setActiveCycleId(id)
 
         reset()
     }
 
-    // function onStartCycle() {
-    const active = cycles.find((cycle) => cycle.id === activeCycle)
+    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
-    const secondsAmount = active ? active.minutesAmount : 0
-    const currentSeconds = active ? secondsAmount - amountSecondsPassed : 0
+    useEffect(() => {
+        if (activeCycle) {
+            setInterval(() => {
+                setAmountSecondsPassed(
+                    differenceInSeconds(new Date(), activeCycle.startDate),
+                )
+            }, 1000)
+        }
+    }, [activeCycle])
+
+    const secondsAmount = activeCycle ? activeCycle.minutesAmount * 60 : 0
+    const currentSeconds = activeCycle ? secondsAmount - amountSecondsPassed : 0
 
     const minutes = String(Math.floor(currentSeconds / 60)).padStart(2, '0')
     const seconds = String(currentSeconds % 60).padStart(2, '0')
-    // }
 
     const task = watch('task')
     const minutesAmount = watch('minutesAmount')
@@ -80,7 +89,7 @@ export function Home() {
             <form
                 action=""
                 id="timerForm"
-                onSubmit={handleSubmit(handleSubmitForm)}
+                onSubmit={handleSubmit(handleCreateNewCycle)}
             >
                 <FormContainer>
                     <label htmlFor="task">Vou trabalhar em</label>
