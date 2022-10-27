@@ -1,9 +1,10 @@
-import { HandPalm, Play } from 'phosphor-react'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
-import { v4 as uuid } from 'uuid'
 import { differenceInSeconds } from 'date-fns'
+import { HandPalm, Play } from 'phosphor-react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { v4 as uuid } from 'uuid'
+import * as zod from 'zod'
 import {
     CountdownContainer,
     FormContainer,
@@ -15,13 +16,12 @@ import {
     // eslint-disable-next-line prettier/prettier
     TaskInput
 } from './styles'
-import { useEffect, useState } from 'react'
 
 const newCycleFormValidationSchema = zod.object({
     task: zod.string().min(1, 'Informe a tarefa'),
     minutesAmount: zod
         .number()
-        .min(5, 'O ciclo mínimo é de 5 minutos')
+        .min(1, 'O ciclo mínimo é de 1 minutos')
         .max(60, 'O clico máximo é de 60 minutos'),
 })
 
@@ -33,6 +33,7 @@ interface Cycle {
     minutesAmount: number
     startDate: Date
     interruptedDate?: Date
+    finishedDate?: Date
 }
 
 export function Home() {
@@ -48,6 +49,16 @@ export function Home() {
         },
     })
 
+    /* Control Variables */
+    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+    const secondsAmount = activeCycle ? activeCycle.minutesAmount * 60 : 0
+    const currentSeconds = activeCycle ? secondsAmount - amountSecondsPassed : 0
+
+    const minutes = String(Math.floor(currentSeconds / 60)).padStart(2, '0')
+    const seconds = String(currentSeconds % 60).padStart(2, '0')
+
+    /* Start cycle function */
     function handleStartNewCycle(data: NewCycleFormData): void {
         const id = uuid()
 
@@ -65,9 +76,10 @@ export function Home() {
         reset()
     }
 
+    /* Stop cycle function */
     function handleStopCycle() {
-        setCycles(
-            cycles.map((cycle) => {
+        setCycles((state) =>
+            state.map((cycle) => {
                 if (cycle.id === activeCycleId) {
                     return { ...cycle, interruptedDate: new Date() }
                 } else {
@@ -78,16 +90,33 @@ export function Home() {
         setActiveCycleId(null)
     }
 
-    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
+    /* Countdown effect */
     useEffect(() => {
         let interval: ReturnType<typeof setInterval> | undefined
 
         if (activeCycle) {
             interval = setInterval(() => {
-                setAmountSecondsPassed(
-                    differenceInSeconds(new Date(), activeCycle.startDate),
+                const differenceSecondsPast = differenceInSeconds(
+                    new Date(),
+                    activeCycle.startDate,
                 )
+
+                if (differenceSecondsPast >= secondsAmount) {
+                    setCycles((state) =>
+                        state.map((cycle) => {
+                            if (cycle.id === activeCycleId) {
+                                return { ...cycle, finishedDate: new Date() }
+                            } else {
+                                return cycle
+                            }
+                        }),
+                    )
+
+                    setAmountSecondsPassed(secondsAmount)
+                    clearInterval(interval)
+                } else {
+                    setAmountSecondsPassed(differenceSecondsPast)
+                }
             }, 1000)
         }
 
@@ -96,12 +125,7 @@ export function Home() {
         }
     }, [activeCycle])
 
-    const secondsAmount = activeCycle ? activeCycle.minutesAmount * 60 : 0
-    const currentSeconds = activeCycle ? secondsAmount - amountSecondsPassed : 0
-
-    const minutes = String(Math.floor(currentSeconds / 60)).padStart(2, '0')
-    const seconds = String(currentSeconds % 60).padStart(2, '0')
-
+    /* Document title effect */
     useEffect(() => {
         if (activeCycle) {
             document.title = `${activeCycle.task} - ${minutes}:${seconds}`
@@ -118,6 +142,7 @@ export function Home() {
 
     console.log(cycles)
 
+    /* Return component */
     return (
         <HomeContainer>
             <form
@@ -146,7 +171,7 @@ export function Home() {
                         type="number"
                         placeholder="00"
                         step={5}
-                        min={5}
+                        min={1}
                         max={60}
                         disabled={!!activeCycle}
                         {...register('minutesAmount', { valueAsNumber: true })}
