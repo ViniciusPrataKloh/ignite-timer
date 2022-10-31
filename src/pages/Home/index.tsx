@@ -38,21 +38,22 @@ export function Home() {
     const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
     const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true)
 
-    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
     function handleSetCycles(newCycle: Cycle) {
         setCycles((state) => [...state, newCycle])
         setActiveCycleId(newCycle.id)
     }
+
+    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
     function handleSetAmountSecondsPassed(newAmountSecondsPassed: number) {
         setAmountSecondsPassed(newAmountSecondsPassed)
     }
 
     function handleStartNewCycle(newCycle: Cycle) {
-        // setCycles((state) => {
-        //     return [...state, newCycle]
-        // })
+        setCycles((state) => {
+            return [...state, newCycle]
+        })
+        setActiveCycleId(newCycle.id)
         console.log(newCycle)
     }
 

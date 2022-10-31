@@ -13,6 +13,8 @@ export function CountDown() {
         handleStopActiveCycle,
     } = useContext(CyclesContext)
 
+    console.log(activeCycle)
+
     const secondsAmount = activeCycle ? activeCycle.minutesAmount * 60 : 0
     const currentSeconds = activeCycle ? secondsAmount - amountSecondsPassed : 0
 
