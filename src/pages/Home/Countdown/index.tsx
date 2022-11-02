@@ -21,7 +21,6 @@ export function CountDown() {
     const minutes = String(Math.floor(currentSeconds / 60)).padStart(2, '0')
     const seconds = String(currentSeconds % 60).padStart(2, '0')
 
-    /* Countdown effect */
     useEffect(() => {
         let interval: ReturnType<typeof setInterval> | undefined
 
@@ -54,7 +53,6 @@ export function CountDown() {
         secondsAmount,
     ])
 
-    /* Document title effect */
     useEffect(() => {
         if (activeCycle) {
             document.title = `${activeCycle.task} - ${minutes}:${seconds}`

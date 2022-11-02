@@ -74,9 +74,6 @@ export function Home() {
         setIsInputEmpty(isFormEmpty)
     }
 
-    // console.log(cycles)
-
-    /* Return component */
     return (
         <HomeContainer>
             <CyclesContext.Provider
