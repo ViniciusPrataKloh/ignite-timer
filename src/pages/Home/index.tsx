@@ -1,5 +1,6 @@
 import { HandPalm, Play } from 'phosphor-react'
-import { createContext, useState } from 'react'
+import { useContext, useState } from 'react'
+import { CyclesContext } from '../../contexts/CycleContextProvider'
 import { CountDown } from './Countdown'
 import { NewFormCycle } from './NewFormCycle'
 import {
@@ -9,66 +10,10 @@ import {
     StopCountdownButton
 } from './styles'
 
-export interface Cycle {
-    id: string
-    task: string
-    minutesAmount: number
-    startDate: Date
-    interruptedDate?: Date
-    finishedDate?: Date
-}
-
-interface IContextCycle {
-    activeCycle: Cycle | undefined
-    activeCycleId: string | null
-    amountSecondsPassed: number
-    isInputEmpty: boolean
-    handleSetCycles: (newCycle: Cycle) => void
-    handleSetAmountSecondsPassed: (amountSecondsPassed: number) => void
-    handleStartNewCycle: (newCycle: Cycle) => void
-    handleStopActiveCycle: () => void
-    handleSetIsInputEmpty: (isFormEmpty: boolean) => void
-}
-
-export const CyclesContext = createContext({} as IContextCycle)
-
 export function Home() {
-    const [cycles, setCycles] = useState<Cycle[]>([])
-    const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
-    const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
     const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true)
 
-    function handleSetCycles(newCycle: Cycle) {
-        setCycles((state) => [...state, newCycle])
-        setActiveCycleId(newCycle.id)
-    }
-
-    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-    function handleSetAmountSecondsPassed(newAmountSecondsPassed: number) {
-        setAmountSecondsPassed(newAmountSecondsPassed)
-    }
-
-    function handleStartNewCycle(newCycle: Cycle) {
-        setCycles((state) => {
-            return [...state, newCycle]
-        })
-        setActiveCycleId(newCycle.id)
-        console.log(newCycle)
-    }
-
-    function handleStopActiveCycle() {
-        setCycles((state) =>
-            state.map((cycle) => {
-                if (cycle.id === activeCycleId) {
-                    return { ...cycle, finishedDate: new Date() }
-                } else {
-                    return cycle
-                }
-            }),
-        )
-        setActiveCycleId(null)
-    }
+    const { activeCycle, handleStopActiveCycle } = useContext(CyclesContext)
 
     function handleSetIsInputEmpty(isFormEmpty: boolean) {
         setIsInputEmpty(isFormEmpty)
@@ -76,22 +21,8 @@ export function Home() {
 
     return (
         <HomeContainer>
-            <CyclesContext.Provider
-                value={{
-                    activeCycle,
-                    handleSetCycles,
-                    activeCycleId,
-                    handleSetAmountSecondsPassed,
-                    isInputEmpty,
-                    amountSecondsPassed,
-                    handleStartNewCycle,
-                    handleStopActiveCycle,
-                    handleSetIsInputEmpty,
-                }}
-            >
-                <NewFormCycle />
-                <CountDown />
-            </CyclesContext.Provider>
+            <NewFormCycle handleSetIsInputEmpty={handleSetIsInputEmpty} />
+            <CountDown />
 
             {activeCycle ? (
                 <StopCountdownButton

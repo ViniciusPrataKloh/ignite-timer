@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { v4 as uuid } from 'uuid'
 import * as zod from 'zod'
-import { Cycle, CyclesContext } from '..'
+import { Cycle, CyclesContext } from '../../../contexts/CycleContextProvider'
 import { FormContainer, MinutesAmountInput, TaskInput } from './styles'
 
 const newCycleFormValidationSchema = zod.object({
@@ -16,13 +16,13 @@ const newCycleFormValidationSchema = zod.object({
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
 
-export function NewFormCycle() {
-    const {
-        activeCycle,
-        handleSetAmountSecondsPassed,
-        handleSetIsInputEmpty,
-        handleStartNewCycle,
-    } = useContext(CyclesContext)
+interface NewFormCycleProps {
+    handleSetIsInputEmpty: (isFormEmpty: boolean) => void
+}
+
+export function NewFormCycle({ handleSetIsInputEmpty }: NewFormCycleProps) {
+    const { activeCycle, handleSetAmountSecondsPassed, handleStartNewCycle } =
+        useContext(CyclesContext)
 
     const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
         resolver: zodResolver(newCycleFormValidationSchema),
