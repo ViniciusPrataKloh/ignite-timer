@@ -22,6 +22,7 @@ interface IContextCycle {
     handleSetAmountSecondsPassed: (amountSecondsPassed: number) => void
     handleStartNewCycle: (newCycle: Cycle) => void
     handleStopActiveCycle: () => void
+    handleInterruptActiveCycle: () => void
 }
 
 export const CyclesContext = createContext({} as IContextCycle)
@@ -63,6 +64,19 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
         setActiveCycleId(null)
     }
 
+    function handleInterruptActiveCycle() {
+        setCycles((state) =>
+            state.map((cycle) => {
+                if (cycle.id === activeCycleId) {
+                    return { ...cycle, interruptedDate: new Date() }
+                } else {
+                    return cycle
+                }
+            }),
+        )
+        setActiveCycleId(null)
+    }
+
     return (
         <CyclesContext.Provider
             value={{
@@ -74,6 +88,7 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
                 amountSecondsPassed,
                 handleStartNewCycle,
                 handleStopActiveCycle,
+                handleInterruptActiveCycle,
             }}
         >
             {children}

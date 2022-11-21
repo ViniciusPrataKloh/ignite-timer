@@ -13,7 +13,8 @@ import {
 export function Home() {
     const [isInputEmpty, setIsInputEmpty] = useState<boolean>(true)
 
-    const { activeCycle, handleStopActiveCycle } = useContext(CyclesContext)
+    const { activeCycle, handleInterruptActiveCycle } =
+        useContext(CyclesContext)
 
     function handleSetIsInputEmpty(isFormEmpty: boolean) {
         setIsInputEmpty(isFormEmpty)
@@ -27,7 +28,7 @@ export function Home() {
             {activeCycle ? (
                 <StopCountdownButton
                     type="button"
-                    onClick={handleStopActiveCycle}
+                    onClick={handleInterruptActiveCycle}
                 >
                     <HandPalm size={24} />
                     Interromper
