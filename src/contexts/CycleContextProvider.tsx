@@ -47,7 +47,6 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
             return [...state, newCycle]
         })
         setActiveCycleId(newCycle.id)
-        console.log(newCycle)
     }
 
     function handleStopActiveCycle() {
