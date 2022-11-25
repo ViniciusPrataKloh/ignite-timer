@@ -26,76 +26,30 @@ export function History() {
                                     <td>{cycle.minutesAmount} minutos</td>
                                     <td>Há cerca de 1 hora</td>
                                     <td>
-                                        {!(
-                                            cycle.interruptedDate ||
-                                            cycle.finishedDate
-                                        ) ? (
+                                        {cycle.interruptedDate ? (
+                                            <tr>
+                                                <StatusCircle statusColor="red">
+                                                    Interrompido
+                                                </StatusCircle>
+                                            </tr>
+                                        ) : cycle.finishedDate ? (
+                                            <tr>
+                                                <StatusCircle statusColor="green">
+                                                    Concluído
+                                                </StatusCircle>
+                                            </tr>
+                                        ) : (
                                             <tr>
                                                 <StatusCircle statusColor="yellow">
                                                     Em andamento
                                                 </StatusCircle>
                                             </tr>
-                                        ) : cycle.interruptedDate ? (
-                                            <td>
-                                                <StatusCircle statusColor="red">
-                                                    Interrompido
-                                                </StatusCircle>
-                                            </td>
-                                        ) : (
-                                            <td>
-                                                <StatusCircle statusColor="green">
-                                                    Concluído
-                                                </StatusCircle>
-                                            </td>
                                         )}
                                     </td>
                                 </tr>
                             )
                         })}
                     </tbody>
-
-                    {/* <tbody>
-                        <tr>
-                            <td>Criar o projeto Ignite Timer</td>
-                            <td>6 horas</td>
-                            <td>Há cerca de 1 hora</td>
-                            <td>
-                                <StatusCircle statusColor="yellow">
-                                    Em andamento
-                                </StatusCircle>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Criar o projeto Ignite Timer</td>
-                            <td>6 horas</td>
-                            <td>Há cerca de 1 hora</td>
-                            <td>
-                                <StatusCircle statusColor="green">
-                                    Concluído
-                                </StatusCircle>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Criar o projeto Ignite Timer</td>
-                            <td>6 horas</td>
-                            <td>Há cerca de 1 hora</td>
-                            <td>
-                                <StatusCircle statusColor="yellow">
-                                    Em andamento
-                                </StatusCircle>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Criar o projeto Ignite Timer</td>
-                            <td>6 horas</td>
-                            <td>Há cerca de 1 hora</td>
-                            <td>
-                                <StatusCircle statusColor="red">
-                                    Interrompido
-                                </StatusCircle>
-                            </td>
-                        </tr> */}
-                    {/* </tbody> */}
                 </table>
             </HistoryList>
         </HistoryContainer>
