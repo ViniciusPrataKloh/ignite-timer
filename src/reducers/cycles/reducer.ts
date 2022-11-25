@@ -1,5 +1,5 @@
 import { Cycle } from '../../contexts/CycleContextProvider'
-import { ActionTypes } from './actions'
+import { ActionTypes, ActionTypesProps } from './actions'
 import { produce } from 'immer'
 
 interface ICyclesState {
@@ -7,7 +7,10 @@ interface ICyclesState {
     activeCycleId: any
 }
 
-export function CyclesStateReducer(state: ICyclesState, action: any) {
+export function CyclesStateReducer(
+    state: ICyclesState,
+    action: ActionTypesProps,
+) {
     switch (action.type) {
         case ActionTypes.ADD_NEW_CYCLE:
             // return {
@@ -16,8 +19,8 @@ export function CyclesStateReducer(state: ICyclesState, action: any) {
             //     activeCycleId: action.payload.newCycle.id,
             // }
             return produce(state, (draft) => {
-                draft.cycles.push(action.payload.newCycle)
-                draft.activeCycleId = action.payload.newCycle.id
+                draft.cycles.push(action.payload)
+                draft.activeCycleId = action.payload.id
             })
         case ActionTypes.MARK_CURRENT_CYCLE_AS_FINISHED: {
             // return {
